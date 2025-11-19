@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import api from '@/services/api';
 import type { Cart, CartItem } from '@/types/api';
+import { getErrorMessage } from '@/utils/errorHandler';
 
 export const useCartStore = defineStore('cart', () => {
     // State
@@ -28,7 +29,7 @@ export const useCartStore = defineStore('cart', () => {
             const response = await api.get<Cart>('/cart');
             cart.value = response.data;
         } catch (err: any) {
-            error.value = err.response?.data?.message || 'Failed to load cart';
+            error.value = getErrorMessage(err);
             console.error('Failed to load cart:', err);
             throw err;
         } finally {
@@ -46,7 +47,7 @@ export const useCartStore = defineStore('cart', () => {
             });
             await fetchCart();
         } catch (err: any) {
-            error.value = err.response?.data?.message || 'Failed to add item to cart';
+            error.value = getErrorMessage(err);
             console.error('Failed to add item to cart:', err);
             throw err;
         } finally {
@@ -61,7 +62,7 @@ export const useCartStore = defineStore('cart', () => {
             await api.delete('/cart');
             await fetchCart();
         } catch (err: any) {
-            error.value = err.response?.data?.message || 'Failed to clear cart';
+            error.value = getErrorMessage(err);
             console.error('Failed to clear cart:', err);
             throw err;
         } finally {

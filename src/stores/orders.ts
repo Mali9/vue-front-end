@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import api from '@/services/api';
 import type { Order } from '@/types/api';
+import { getErrorMessage } from '@/utils/errorHandler';
 
 interface OrderFormData {
   address: string;
@@ -26,7 +27,7 @@ export const useOrdersStore = defineStore('orders', () => {
       const response = await api.get<Order[]>('/orders');
       orders.value = response.data;
     } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to load orders';
+      error.value = getErrorMessage(err);
       console.error('Failed to load orders:', err);
       throw err;
     } finally {
@@ -41,7 +42,7 @@ export const useOrdersStore = defineStore('orders', () => {
       await api.post('/orders', orderData);
       await fetchOrders();
     } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to create order';
+      error.value = getErrorMessage(err);
       console.error('Failed to create order:', err);
       throw err;
     } finally {

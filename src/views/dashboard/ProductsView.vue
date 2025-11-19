@@ -152,6 +152,7 @@ import { useProductsStore } from '@/stores/products';
 import { useCartStore } from '@/stores/cart';
 import BaseModal from '@/components/ui/BaseModal.vue';
 import Swal from 'sweetalert2';
+import { getErrorMessage } from '@/utils/errorHandler';
 
 const productsStore = useProductsStore();
 const cartStore = useCartStore();
@@ -256,10 +257,11 @@ const saveProduct = async () => {
       showConfirmButton: false,
     });
   } catch (error) {
+    const errorMessage = productsStore.error || getErrorMessage(error) || 'Failed to save product. Please try again.';
     await Swal.fire({
       icon: 'error',
       title: 'Error',
-      text: productsStore.error || 'Failed to save product. Please try again.',
+      text: errorMessage,
       confirmButtonColor: '#2563eb',
     });
   }
@@ -289,10 +291,11 @@ const deleteProduct = async (id) => {
       showConfirmButton: false,
     });
   } catch (error) {
+    const errorMessage = productsStore.error || getErrorMessage(error) || 'Failed to delete product. Please try again.';
     await Swal.fire({
       icon: 'error',
       title: 'Error',
-      text: productsStore.error || 'Failed to delete product. Please try again.',
+      text: errorMessage,
       confirmButtonColor: '#2563eb',
     });
   }
@@ -333,10 +336,11 @@ const addToCart = async (productId) => {
       showConfirmButton: false,
     });
   } catch (error) {
+    const errorMessage = cartStore.error || getErrorMessage(error) || 'Failed to add item to cart. Please try again.';
     await Swal.fire({
       icon: 'error',
       title: 'Error',
-      text: cartStore.error || 'Failed to add item to cart. Please try again.',
+      text: errorMessage,
       confirmButtonColor: '#2563eb',
     });
   }

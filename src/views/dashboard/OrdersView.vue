@@ -115,6 +115,7 @@ import { useOrdersStore } from '@/stores/orders';
 import BaseModal from '@/components/ui/BaseModal.vue';
 import type { Order } from '@/types/api';
 import Swal from 'sweetalert2';
+import { getErrorMessage } from '@/utils/errorHandler';
 
 const cartStore = useCartStore();
 const ordersStore = useOrdersStore();
@@ -171,10 +172,11 @@ const clearCart = async () => {
       showConfirmButton: false,
     });
   } catch (error) {
+    const errorMessage = cartStore.error || getErrorMessage(error) || 'Failed to clear cart. Please try again.';
     await Swal.fire({
       icon: 'error',
       title: 'Error',
-      text: cartStore.error || 'Failed to clear cart. Please try again.',
+      text: errorMessage,
       confirmButtonColor: '#2563eb',
     });
   }
@@ -216,7 +218,7 @@ const submitOrder = async () => {
       confirmButtonColor: '#2563eb',
     });
   } catch (error: any) {
-    const errorMessage = error.response?.data?.cart?.[0] ?? error.response?.data?.stock?.[0] ?? (ordersStore.error || 'Unable to place order');
+    const errorMessage = ordersStore.error || getErrorMessage(error) || 'Unable to place order';
     await Swal.fire({
       icon: 'error',
       title: 'Order Failed',

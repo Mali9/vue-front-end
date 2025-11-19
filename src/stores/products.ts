@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import api from '@/services/api';
 import type { Product, ProductResponse } from '@/types/api';
+import { getErrorMessage } from '@/utils/errorHandler';
 
 interface ProductFormData {
     name: string;
@@ -65,7 +66,7 @@ export const useProductsStore = defineStore('products', () => {
             products.value = response.data.data;
             meta.value = response.data.meta;
         } catch (err: any) {
-            error.value = err.response?.data?.message || 'Failed to load products';
+            error.value = getErrorMessage(err);
             console.error('Failed to load products:', err);
             throw err;
         } finally {
@@ -80,7 +81,7 @@ export const useProductsStore = defineStore('products', () => {
             await api.post('/products', productData);
             await fetchProducts(meta.value.current_page);
         } catch (err: any) {
-            error.value = err.response?.data?.message || 'Failed to create product';
+            error.value = getErrorMessage(err);
             console.error('Failed to create product:', err);
             throw err;
         } finally {
@@ -95,7 +96,7 @@ export const useProductsStore = defineStore('products', () => {
             await api.put(`/products/${id}`, productData);
             await fetchProducts(meta.value.current_page);
         } catch (err: any) {
-            error.value = err.response?.data?.message || 'Failed to update product';
+            error.value = getErrorMessage(err);
             console.error('Failed to update product:', err);
             throw err;
         } finally {
@@ -110,7 +111,7 @@ export const useProductsStore = defineStore('products', () => {
             await api.delete(`/products/${id}`);
             await fetchProducts(meta.value.current_page);
         } catch (err: any) {
-            error.value = err.response?.data?.message || 'Failed to delete product';
+            error.value = getErrorMessage(err);
             console.error('Failed to delete product:', err);
             throw err;
         } finally {
