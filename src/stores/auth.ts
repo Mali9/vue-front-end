@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import api from '@/services/api';
 import type { AuthSuccess, User } from '@/types/api';
+import { getErrorMessage } from '@/utils/errorHandler';
 
 interface Credentials {
   email: string;
@@ -56,7 +57,7 @@ export const useAuthStore = defineStore('auth', {
         const { data } = await api.post<AuthSuccess>('/auth/login', credentials);
         this.setSession(data);
       } catch (error: any) {
-        this.error = error.response?.data?.message ?? 'Unable to login';
+        this.error = getErrorMessage(error);
         throw error;
       } finally {
         this.loading = false;
@@ -71,7 +72,7 @@ export const useAuthStore = defineStore('auth', {
           this.setSession(data.token);
         }
       } catch (error: any) {
-        this.error = error.response?.data?.message ?? 'Unable to register';
+        this.error = getErrorMessage(error);
         throw error;
       } finally {
         this.loading = false;

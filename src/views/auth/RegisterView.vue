@@ -37,6 +37,8 @@
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import Swal from 'sweetalert2';
+import { getErrorMessage } from '@/utils/errorHandler';
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -48,8 +50,25 @@ const form = reactive({
 });
 
 const handleSubmit = async () => {
-  await auth.register(form);
-  router.push({ name: 'dashboard' });
+  try {
+    await auth.register(form);
+    await Swal.fire({
+      icon: 'success',
+      title: 'Account Created!',
+      text: 'Your account has been created successfully. Welcome!',
+      timer: 1500,
+      showConfirmButton: false,
+    });
+    router.push({ name: 'dashboard' });
+  } catch (error) {
+    const errorMessage = auth.error || getErrorMessage(error) || 'Unable to register. Please try again.';
+    await Swal.fire({
+      icon: 'error',
+      title: 'Registration Failed',
+      text: errorMessage,
+      confirmButtonColor: '#2563eb',
+    });
+  }
 };
 </script>
 
